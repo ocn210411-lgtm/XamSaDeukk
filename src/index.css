@@ -1,0 +1,160 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --terra: #C8552A;
+  --gold: #E8A830;
+  --green: #0D7A3E;
+  --red: #B22222;
+  --cream: #FDF6EC;
+  --sand: #F5E6CC;
+  --brown: #5C2D0A;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: var(--cream);
+  color: var(--brown);
+  overflow-x: hidden;
+}
+
+h1, h2, h3, h4 { font-family: 'Playfair Display', serif; }
+
+/* === BOGOLAN PATTERN === */
+.bogolan {
+  background-color: var(--cream);
+  background-image:
+    repeating-linear-gradient(45deg, rgba(200,85,42,0.04) 0px, rgba(200,85,42,0.04) 2px, transparent 2px, transparent 20px),
+    repeating-linear-gradient(-45deg, rgba(232,168,48,0.04) 0px, rgba(232,168,48,0.04) 2px, transparent 2px, transparent 20px);
+}
+
+/* === FLAG STRIPE === */
+.flag-stripe {
+  height: 4px;
+  background: linear-gradient(90deg, #0D7A3E 33.3%, #E8A830 33.3% 66.6%, #B22222 66.6%);
+}
+
+/* === GLASS CARD === */
+.glass-card {
+  background: rgba(255,255,255,0.85);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(232,168,48,0.15);
+  border-radius: 20px;
+  box-shadow: 0 4px 24px rgba(92,45,10,0.08);
+}
+
+/* === BUTTONS === */
+.btn-primary {
+  background: linear-gradient(135deg, #C8552A, #A83820);
+  color: white;
+  border-radius: 50px;
+  font-weight: 600;
+  font-family: 'Poppins', sans-serif;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 0 4px 16px rgba(200,85,42,0.35);
+}
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(200,85,42,0.45); }
+
+.btn-gold {
+  background: linear-gradient(135deg, #E8A830, #C88818);
+  color: white;
+  border-radius: 50px;
+  font-weight: 600;
+  font-family: 'Poppins', sans-serif;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.btn-gold:hover { transform: translateY(-2px); }
+
+.btn-green {
+  background: linear-gradient(135deg, #0D7A3E, #0A5C2E);
+  color: white;
+  border-radius: 50px;
+  font-weight: 600;
+  font-family: 'Poppins', sans-serif;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+/* === ANIMATIONS === */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+@keyframes shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes countUp {
+  from { opacity: 0; transform: scale(0.5); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.float { animation: float 3s ease-in-out infinite; }
+.fade-up { animation: fadeUp 0.6s ease forwards; }
+
+.shimmer-text {
+  background: linear-gradient(90deg, #fff 30%, #E8A830 50%, #fff 70%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer 3s linear infinite;
+}
+
+/* === ADMIN SIDEBAR === */
+.admin-sidebar {
+  width: 260px;
+  min-height: 100vh;
+  background: linear-gradient(180deg, #1A0A00 0%, #2D1200 50%, #1A0A00 100%);
+  border-right: 1px solid rgba(232,168,48,0.15);
+}
+
+.admin-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 20px;
+  border-radius: 12px;
+  margin: 2px 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: rgba(255,255,255,0.6);
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+}
+.admin-nav-item:hover { background: rgba(232,168,48,0.1); color: #E8A830; }
+.admin-nav-item.active { background: linear-gradient(135deg, rgba(200,85,42,0.3), rgba(232,168,48,0.2)); color: #E8A830; border: 1px solid rgba(232,168,48,0.2); }
+
+/* === DRAG HANDLE === */
+.drag-handle { cursor: grab; color: #aaa; }
+.drag-handle:active { cursor: grabbing; }
+
+/* === REVEAL ON SCROLL === */
+.reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+
+/* === GAME CARD HOVER === */
+.game-card-hover {
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+.game-card-hover:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 48px rgba(92,45,10,0.15);
+}
