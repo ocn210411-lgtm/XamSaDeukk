@@ -1,8 +1,9 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import { useSite } from '../context/SiteContext'
+import { fetchEncyclopedie, cloudEnabled } from '../utils/cloudStorage'
 
 const CATEGORIES = [
   { id: 'all', label: 'Tout', icon: '🌍', color: '#C8552A' },
@@ -173,11 +174,22 @@ function EntryModal({ entry, onClose }) {
 }
 
 export default function Encyclopedie() {
-  const { data } = useSite()
-  const entries = data.encyclopedie || []
+  const { data, update } = useSite()
+  const [entries, setEntries] = useState(data.encyclopedie || [])
   const [activeCategory, setActiveCategory] = useState('all')
   const [search, setSearch] = useState('')
   const [selectedEntry, setSelectedEntry] = useState(null)
+
+  // Charger depuis le cloud au démarrage
+  useEffect(() => {
+    if (!cloudEnabled) return
+    fetchEncyclopedie().then(cloudEntries => {
+      if (cloudEntries && cloudEntries.length > 0) {
+        setEntries(cloudEntries)
+        update('encyclopedie', cloudEntries)
+      }
+    })
+  }, [])
 
   const filtered = useMemo(() => {
     return entries.filter(e => {

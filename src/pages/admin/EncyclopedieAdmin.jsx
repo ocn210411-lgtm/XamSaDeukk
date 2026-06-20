@@ -1,5 +1,6 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { useSite } from '../../context/SiteContext'
+import { saveEncyclopedie, fetchEncyclopedie, compressImage, cloudEnabled } from '../../utils/cloudStorage'
 
 const CATEGORIES = [
   { id: 'personnalite', label: 'Personnalité', icon: '👑' },
@@ -23,18 +24,38 @@ const emptyEntry = () => ({
 export default function EncyclopedieAdmin() {
   const { data, update } = useSite()
   const [entries, setEntries] = useState([...(data.encyclopedie || [])])
-  const [editing, setEditing] = useState(null) // id ou null
+  const [editing, setEditing] = useState(null)
   const [creating, setCreating] = useState(false)
   const [form, setForm] = useState(null)
   const [saved, setSaved] = useState(false)
+  const [saving, setSaving] = useState(false)
+  const [cloudStatus, setCloudStatus] = useState(null)
   const [search, setSearch] = useState('')
   const [filterCat, setFilterCat] = useState('all')
   const fileRef = useRef()
 
-  const save = () => {
+  // Charger depuis le cloud au démarrage
+  useEffect(() => {
+    if (!cloudEnabled) return
+    fetchEncyclopedie().then(cloudEntries => {
+      if (cloudEntries && cloudEntries.length > 0) {
+        setEntries(cloudEntries)
+        update('encyclopedie', cloudEntries)
+        setCloudStatus('sync')
+      }
+    })
+  }, [])
+
+  const save = async () => {
+    setSaving(true)
     update('encyclopedie', entries)
+    if (cloudEnabled) {
+      const ok = await saveEncyclopedie(entries)
+      setCloudStatus(ok ? 'saved' : 'error')
+    }
+    setSaving(false)
     setSaved(true)
-    setTimeout(() => setSaved(false), 2500)
+    setTimeout(() => setSaved(false), 3000)
   }
 
   const startCreate = () => {
@@ -113,11 +134,31 @@ export default function EncyclopedieAdmin() {
           <p className="text-brown/60 text-sm mt-1">Gérez les entrées culturelles affichées sur la page Encyclopédie</p>
         </div>
         <div className="flex gap-3 items-center flex-wrap">
-          {saved && <span className="text-green-600 font-semibold text-sm">✅ Sauvegardé !</span>}
+          {saved && <span className="text-green-600 font-semibold text-sm">✅ Publié !</span>}
           <button onClick={startCreate} className="btn-gold px-4 py-2 text-white text-sm font-bold">+ Nouvelle entrée</button>
-          <button onClick={save} className="btn-primary px-4 py-2 text-white text-sm font-bold">💾 Sauvegarder</button>
+          <button onClick={save} disabled={saving} className="btn-primary px-4 py-2 text-white text-sm font-bold">
+            {saving ? '⏳ Envoi...' : '☁️ Publier'}
+          </button>
         </div>
       </div>
+
+      {/* Bandeau cloud */}
+      {cloudEnabled ? (
+        <div className="glass-card p-3 mb-5 flex items-center gap-3"
+          style={{ background: cloudStatus === 'error' ? 'rgba(220,50,50,0.07)' : 'rgba(13,122,62,0.07)', border: `1.5px solid ${cloudStatus === 'error' ? 'rgba(220,50,50,0.2)' : 'rgba(13,122,62,0.2)'}` }}>
+          <span className="text-xl">{cloudStatus === 'error' ? '❌' : cloudStatus === 'saved' ? '☁️' : cloudStatus === 'sync' ? '🔄' : '☁️'}</span>
+          <span className="text-sm font-medium" style={{ color: cloudStatus === 'error' ? '#c00' : '#0D7A3E' }}>
+            {cloudStatus === 'error' ? 'Erreur cloud — données sauvegardées localement uniquement'
+              : cloudStatus === 'saved' ? 'Encyclopédie publiée sur le cloud — visible par tous les visiteurs ✅'
+              : cloudStatus === 'sync' ? 'Données synchronisées depuis le cloud'
+              : 'Cloud connecté — cliquez "Publier" pour mettre à jour pour tous'}
+          </span>
+        </div>
+      ) : (
+        <div className="glass-card p-3 mb-5" style={{ background: 'rgba(232,120,30,0.07)', border: '1.5px solid rgba(232,120,30,0.25)' }}>
+          <span className="text-sm text-brown/70">⚠️ <strong>Mode local</strong> — Ajoutez <code>VITE_JSONBIN_KEY</code> et <code>VITE_JSONBIN_ID</code> sur Render pour publier sur le cloud.</span>
+        </div>
+      )}
 
       {/* FORMULAIRE D'ÉDITION */}
       {form && (
