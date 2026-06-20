@@ -50,9 +50,21 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-6 pt-6 flex flex-col md:flex-row items-center justify-between gap-2"
         style={{ borderTop: '1px solid rgba(232,168,48,0.1)' }}>
         <p className="text-white/40 text-sm text-center">{footerText}</p>
-        <div className="flex gap-3 text-white/30 text-xs">
-          <span>🇸🇳</span>
-          <span>Teranga • Jom • Kersa</span>
+        <div className="flex flex-col md:flex-row items-center gap-3 text-xs">
+          <div className="flex gap-3 text-white/30">
+            <span>🇸🇳</span>
+            <span>Teranga • Jom • Kersa</span>
+          </div>
+          <span style={{ color: 'rgba(232,168,48,0.4)' }}>|</span>
+          <span style={{ color: 'rgba(255,255,255,0.25)' }}>
+            Site réalisé par{' '}
+            <a href="https://nisow-agency.com" target="_blank" rel="noopener noreferrer"
+              style={{ color: 'rgba(232,168,48,0.55)', textDecoration: 'none', fontWeight: 600 }}
+              onMouseEnter={e => e.target.style.color = '#E8A830'}
+              onMouseLeave={e => e.target.style.color = 'rgba(232,168,48,0.55)'}>
+              nisow-agency.com
+            </a>
+          </span>
         </div>
       </div>
     </footer>

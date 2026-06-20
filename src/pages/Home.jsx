@@ -157,27 +157,9 @@ function TestimonialsSection({ testimonials }) {
   )
 }
 
-function SiteStatsSection({ siteStats }) {
-  return (
-    <section className="py-16" style={{ background: 'linear-gradient(135deg, #1A0A00, #2D1200, #1A0A00)' }}>
-      <div className="max-w-6xl mx-auto px-6">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-          {siteStats.map((s, i) => (
-            <div key={i}>
-              <div className="text-3xl mb-2">{s.icon}</div>
-              <div className="text-3xl font-black font-playfair mb-1" style={{ color: '#E8A830' }}>{s.value}</div>
-              <div className="text-white/50 text-sm">{s.label}</div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  )
-}
-
 export default function Home() {
   const { data } = useSite()
-  const { hero, announcement, games, wolofBanner, testimonials, siteStats } = data
+  const { hero, announcement, games, wolofBanner, testimonials } = data
 
   useEffect(() => {
     document.title = 'XamSaDeukk — Xam Sa Boppam, Xam Sa Reewam'
@@ -194,7 +176,6 @@ export default function Home() {
       <GamesSection games={games} />
       <WolofBanner wolofBanner={wolofBanner} />
       <TestimonialsSection testimonials={testimonials} />
-      <SiteStatsSection siteStats={siteStats} />
       <Footer />
     </div>
   )
