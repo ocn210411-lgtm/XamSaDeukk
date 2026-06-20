@@ -1,8 +1,9 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import Navbar from '../../components/Navbar'
 import Footer from '../../components/Footer'
 import { useSite } from '../../context/SiteContext'
+import { fetchPuzzles, cloudEnabled } from '../../utils/cloudStorage'
 
 // Génère les pièces pour un puzzle NxN
 function buildPieces(gridN) {
@@ -86,8 +87,21 @@ function SelectScreen({ puzzles }) {
 }
 
 export default function JeuPuzzle() {
-  const { data } = useSite()
-  const puzzles = data.puzzles || []
+  const { data, update } = useSite()
+  const [puzzles, setPuzzles] = useState(data.puzzles || [])
+  const [loadingCloud, setLoadingCloud] = useState(cloudEnabled)
+
+  // Charger les puzzles depuis le cloud au démarrage
+  useEffect(() => {
+    if (!cloudEnabled) return
+    fetchPuzzles().then(cloudPuzzles => {
+      if (cloudPuzzles && cloudPuzzles.length > 0) {
+        setPuzzles(cloudPuzzles)
+        update('puzzles', cloudPuzzles)
+      }
+      setLoadingCloud(false)
+    })
+  }, [])
 
   const [step, setStep] = useState('select') // select | difficulty | play | won
   const [currentPuzzle, setCurrentPuzzle] = useState(null)
@@ -250,6 +264,16 @@ export default function JeuPuzzle() {
   // ÉCRAN SÉLECTION
   // ═══════════════════════════════════════════════════════════
   if (step === 'select') {
+    if (loadingCloud) return (
+      <div className="min-h-screen bogolan flex items-center justify-center">
+        <Navbar />
+        <div className="text-center pt-28">
+          <div className="text-6xl mb-4 animate-bounce">🧩</div>
+          <p className="text-brown font-semibold text-lg">Chargement des puzzles...</p>
+          <p className="text-brown/50 text-sm mt-2">Connexion au cloud ☁️</p>
+        </div>
+      </div>
+    )
     if (puzzles.length === 0) return <SelectScreen puzzles={[]} />
     return (
       <div className="min-h-screen bogolan">
